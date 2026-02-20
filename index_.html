@@ -248,160 +248,6 @@
 
   .result-sub { font-size: 11px; color: var(--text-light); }
 
-  /* RATIO */
-  .ratio-block {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: var(--shadow-sm);
-    transition: border-left-color 0.3s;
-  }
-
-  .ratio-block.ok   { border-left: 4px solid var(--green); }
-  .ratio-block.warn { border-left: 4px solid var(--red); }
-
-  .ratio-number-wrap { flex-shrink: 0; text-align: center; min-width: 90px; }
-
-  .ratio-label-sm {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-bottom: 2px;
-  }
-
-  .ratio-value {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .ratio-value.ok   { color: var(--green); }
-  .ratio-value.warn { color: var(--red); }
-
-  .ratio-bar-wrap { flex: 1; }
-
-  .ratio-bar-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .ratio-bar-track {
-    height: 8px;
-    background: #f0f0f0;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-
-  .ratio-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.4s ease, background 0.3s;
-  }
-
-  .ratio-bar-fill.ok   { background: var(--green); }
-  .ratio-bar-fill.warn { background: var(--red); }
-
-  .ratio-bar-sub { font-size: 10px; color: var(--text-light); margin-top: 4px; }
-
-  .ratio-badge {
-    flex-shrink: 0;
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-
-  .ratio-badge.ok   { background: var(--green-bg); color: var(--green); }
-  .ratio-badge.warn { background: var(--red-light); color: var(--red); }
-
-  /* BANDS */
-  .bands-section { margin-top: 16px; }
-
-  .bands-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-bottom: 10px;
-  }
-
-  .bands-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .band-card {
-    border-radius: 8px;
-    padding: 14px 14px;
-    border: 1.5px solid transparent;
-    transition: box-shadow 0.25s, border-color 0.25s;
-  }
-
-  .band-card.band-danger  { background: #fff2f0; border-color: #ffc5bb; }
-  .band-card.band-caution { background: #fff9f0; border-color: #ffe0b0; }
-  .band-card.band-good    { background: #f0faf4; border-color: #b8dfc8; }
-  .band-card.band-great   { background: #f0f5ff; border-color: #b8cfee; }
-
-  .band-card.active-band {
-    box-shadow: 0 0 0 2px var(--red), var(--shadow);
-    border-color: var(--red) !important;
-  }
-
-  .band-range {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .band-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .band-danger  .band-dot { background: #c01508; }
-  .band-caution .band-dot { background: #c25800; }
-  .band-good    .band-dot { background: var(--green); }
-  .band-great   .band-dot { background: #1a4ea0; }
-
-  .band-danger  .band-range { color: #c01508; }
-  .band-caution .band-range { color: #c25800; }
-  .band-good    .band-range { color: var(--green); }
-  .band-great   .band-range { color: #1a4ea0; }
-
-  .band-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 5px;
-  }
-
-  .band-desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
   /* TABLE */
   .table-section { margin-top: 24px; }
 
@@ -509,6 +355,163 @@
     .results-grid { grid-template-columns: 1fr 1fr; }
     header, .app  { padding-left: 16px; padding-right: 16px; }
   }
+
+  /* HELP BOX */
+  .help-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    padding: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .help-toggle:hover { text-decoration: underline; }
+
+  .help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .help-box {
+    display: none;
+    margin-top: 12px;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 12px;
+  }
+
+  .help-box.open { display: block; }
+
+  .help-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .help-intro {
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .help-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .help-col {
+    border-radius: 6px;
+    padding: 12px;
+  }
+
+  .help-col-yes { background: var(--green-bg); }
+  .help-col-no  { background: var(--red-light); }
+
+  .help-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .help-col-yes .help-col-title { color: var(--green); }
+  .help-col-no  .help-col-title { color: var(--red); }
+
+  .help-col-sub {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .help-col ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .help-col ul li {
+    font-size: 11px;
+    color: var(--text);
+    padding: 2px 0;
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .help-col ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--text-light);
+  }
+
+  .help-example {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .help-example-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+
+  .help-benchmarks {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .help-bm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+  }
+
+  .bm-range {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 60px;
+    background: var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .bm-label { color: var(--text-muted); }
+
 </style>
 </head>
 <body>
@@ -570,6 +573,45 @@
           <span class="input-unit">%</span>
         </div>
         <input type="range" id="margin_range" min="1" max="100" step="1" value="70">
+        <button class="help-toggle" onclick="toggleHelp()" type="button">
+          <span class="help-icon">?</span> Jak zjistím svou marži?
+        </button>
+        <div class="help-box" id="margin_help">
+          <div class="help-title">Zde zadejte hrubou marži (gross margin)</div>
+          <p class="help-intro">Podíl příjmu, který vám zbyde po odečtení přímých nákladů na provoz — těch, které rostou s každým novým zákazníkem.</p>
+          <div class="help-cols">
+            <div class="help-col help-col-yes">
+              <div class="help-col-title">✓ Patří do marže</div>
+              <div class="help-col-sub">přímé náklady rostoucí s počtem zákazníků</div>
+              <ul>
+                <li>Hosting a servery</li>
+                <li>Licence třetích stran v produktu</li>
+                <li>Platební brány a transakční poplatky</li>
+                <li>Zákaznická podpora vázaná na zákazníka</li>
+              </ul>
+            </div>
+            <div class="help-col help-col-no">
+              <div class="help-col-title">✗ Nepatří do marže</div>
+              <div class="help-col-sub">fixní náklady nezávislé na počtu zákazníků</div>
+              <ul>
+                <li>Marketing a reklama</li>
+                <li>Vývoj a platy vývojářů</li>
+                <li>Prodejní tým</li>
+                <li>Administrativa a provoz firmy</li>
+              </ul>
+            </div>
+          </div>
+          <div class="help-example">
+            <span class="help-example-label">Příklad výpočtu</span>
+            Předplatné <strong>1 990 Kč/měs.</strong>, přímé náklady <strong>600 Kč/zákazníka</strong>
+            → marže = (1 990 − 600) / 1 990 = <strong>70 %</strong>
+          </div>
+          <div class="help-benchmarks">
+            <div class="help-bm"><span class="bm-range">70–85 %</span><span class="bm-label">Čistě softwarový SaaS</span></div>
+            <div class="help-bm"><span class="bm-range">50–70 %</span><span class="bm-label">SaaS s lidskou podporou</span></div>
+            <div class="help-bm"><span class="bm-range">30–50 %</span><span class="bm-label">SaaS s hardwarem / integrací</span></div>
+          </div>
+        </div>
       </div>
 
       <div class="field">
@@ -580,6 +622,7 @@
         </div>
         <input type="range" id="conversion_range" min="1" max="100" step="1" value="20">
       </div>
+    </div>
     </div>
 
     <!-- OUTPUTS -->
@@ -609,51 +652,8 @@
           </div>
         </div>
       </div>
-
-      <!-- RATIO -->
-      <div class="ratio-block" id="ratio_block">
-        <div class="ratio-number-wrap">
-          <div class="ratio-label-sm">LTV : CAC Ratio</div>
-          <div class="ratio-value" id="ratio_value">—</div>
-        </div>
-        <div class="ratio-bar-wrap">
-          <div class="ratio-bar-label">
-            <span>Aktuální poměr</span>
-            <span>Minimum zdravého SaaS: 3 : 1</span>
-          </div>
-          <div class="ratio-bar-track">
-            <div class="ratio-bar-fill" id="ratio_bar" style="width:0%"></div>
-          </div>
-          <div class="ratio-bar-sub">při doporučeném CPA (40 % z maxima)</div>
-        </div>
-        <div class="ratio-badge" id="ratio_badge">—</div>
       </div>
-
-      <!-- BANDS -->
-      <div class="bands-section">
-        <div class="bands-title">Co říká LTV : CAC ratio?</div>
-        <div class="bands-grid">
-          <div class="band-card band-danger" id="band_danger">
-            <div class="band-range"><span class="band-dot"></span>pod 1 : 1</div>
-            <div class="band-name">Kritické</div>
-            <div class="band-desc">Každý zákazník vás stojí víc, než kdy přinese. Spalujete peníze.</div>
-          </div>
-          <div class="band-card band-caution" id="band_caution">
-            <div class="band-range"><span class="band-dot"></span>1 : 1 – 3 : 1</div>
-            <div class="band-name">Přežití</div>
-            <div class="band-desc">Přežíváte, ale nemáte polštář na chyby, slevy ani retenci.</div>
-          </div>
-          <div class="band-card band-good" id="band_good">
-            <div class="band-range"><span class="band-dot"></span>3 : 1 – 5 : 1</div>
-            <div class="band-name">Zdravý SaaS</div>
-            <div class="band-desc">Investoři i management vidí toto jako signál udržitelného růstu.</div>
-          </div>
-          <div class="band-card band-great" id="band_great">
-            <div class="band-range"><span class="band-dot"></span>nad 5 : 1</div>
-            <div class="band-name">Skvělé – pozor</div>
-            <div class="band-desc">Možná utrácíte příliš málo na marketing a necháváte růst na stole.</div>
-          </div>
-        </div>
+    </div>
       </div>
     </div>
   </div>
@@ -662,7 +662,7 @@
   <div class="table-section">
     <div class="table-header">
       <h2>Predikce CPA po 100 Kč</h2>
-      <p>Analýza ziskovosti pro různé scénáře výše CPA · zvýrazněná hodnota = aktuálně doporučené CPA</p>
+      <p>Analýza ziskovosti pro různé scénáře výše CPA · zvýrazněná hodnota = doporučené CPA</p>
     </div>
     <div class="table-wrap">
       <table>
@@ -672,7 +672,6 @@
             <th>Náklady na lead</th>
             <th>Zisk na zákazníka</th>
             <th>Marže zisku</th>
-            <th>LTV : CAC</th>
             <th>Hodnocení</th>
           </tr>
         </thead>
@@ -692,10 +691,10 @@
   const fmtN = v => Math.round(v).toLocaleString('cs-CZ');
 
   const fields = [
-    ['mrr',        'mrr_range',        'prev_mrr',    v => fmtN(v) + ' Kč'],
-    ['duration',   'duration_range',   'prev_dur',    v => v + ' měs.'],
-    ['margin',     'margin_range',     'prev_margin', v => v + ' %'],
-    ['conversion', 'conversion_range', 'prev_conv',   v => v + ' %'],
+    ['mrr',         'mrr_range',          'prev_mrr',     v => fmtN(v) + ' Kč'],
+    ['duration',    'duration_range',     'prev_dur',     v => v + ' měs.'],
+    ['margin',      'margin_range',       'prev_margin',  v => v + ' %'],
+    ['conversion',  'conversion_range',   'prev_conv',    v => v + ' %'],
   ];
 
   fields.forEach(([inp, rng, prev, display]) => {
@@ -707,10 +706,10 @@
   });
 
   function calculate() {
-    const mrr      = parseFloat(document.getElementById('mrr').value) || 0;
-    const duration = parseFloat(document.getElementById('duration').value) || 0;
-    const margin   = parseFloat(document.getElementById('margin').value) / 100 || 0;
-    const conv     = parseFloat(document.getElementById('conversion').value) / 100 || 0;
+    const mrr        = parseFloat(document.getElementById('mrr').value) || 0;
+    const duration   = parseFloat(document.getElementById('duration').value) || 0;
+    const margin     = parseFloat(document.getElementById('margin').value) / 100 || 0;
+    const conv       = parseFloat(document.getElementById('conversion').value) / 100 || 0;
 
     const ltv    = mrr * duration * margin;
     const maxCpa = ltv * conv;
@@ -722,41 +721,6 @@
     document.getElementById('out_rec_cpa').textContent = fmt(recCpa);
     document.getElementById('out_profit').textContent  = fmt(profit);
 
-    const rv = document.getElementById('ratio_value');
-    const rb = document.getElementById('ratio_badge');
-
-    // Ratio dava smysl jen pokud LTV i recCpa jsou > 1 Kc
-    // Jinak by matematicky vyslo obrovske cislo i pri LTV = 0
-    if (ltv < 1 || recCpa < 1) {
-      rv.textContent = '—';
-      rv.className   = 'ratio-value warn';
-      rb.textContent = '⚠ LTV je prílis nízké';
-      rb.className   = 'ratio-badge warn';
-      document.getElementById('ratio_block').className = 'ratio-block warn';
-      document.getElementById('ratio_bar').className   = 'ratio-bar-fill warn';
-      document.getElementById('ratio_bar').style.width = '0%';
-      ['band_danger','band_caution','band_good','band_great'].forEach(id =>
-        document.getElementById(id).classList.remove('active-band'));
-      document.getElementById('band_danger').classList.add('active-band');
-    } else {
-      const ratio = ltv / recCpa;
-      const isOk  = ratio >= 3;
-      rv.textContent = ratio.toFixed(1) + ' : 1';
-      rv.className   = 'ratio-value ' + (isOk ? 'ok' : 'warn');
-      rb.textContent = isOk ? '✓ Zdravý poměr' : '⚠ Pod minimem 3 : 1';
-      rb.className   = 'ratio-badge ' + (isOk ? 'ok' : 'warn');
-      document.getElementById('ratio_block').className = 'ratio-block ' + (isOk ? 'ok' : 'warn');
-      document.getElementById('ratio_bar').className   = 'ratio-bar-fill ' + (isOk ? 'ok' : 'warn');
-      document.getElementById('ratio_bar').style.width = Math.min(ratio / 6 * 100, 100) + '%';
-
-      ['band_danger','band_caution','band_good','band_great'].forEach(id =>
-        document.getElementById(id).classList.remove('active-band'));
-      if      (ratio < 1)  document.getElementById('band_danger').classList.add('active-band');
-      else if (ratio < 3)  document.getElementById('band_caution').classList.add('active-band');
-      else if (ratio <= 5) document.getElementById('band_good').classList.add('active-band');
-      else                 document.getElementById('band_great').classList.add('active-band');
-    }
-
     buildTable(ltv, maxCpa, recCpa, conv);
   }
 
@@ -765,20 +729,17 @@
     tbody.innerHTML = '';
     if (maxCpa <= 0) return;
 
-    const tableMax      = Math.max(Math.ceil(maxCpa * 2 / 100) * 100, 200);
-    const recCpaRounded = Math.round(recCpa / 100) * 100;
+    const tableMax        = Math.max(Math.ceil(maxCpa * 2 / 100) * 100, 200);
+    const recCpaRounded  = Math.round(recCpa / 100) * 100;
 
     for (let cpa = 100; cpa <= tableMax; cpa += 100) {
       const costPerLead = conv > 0 ? cpa / conv : 0;
       const profit      = ltv - cpa;
       const profitPct   = ltv > 0 ? (profit / ltv * 100) : 0;
-      const ratioVal    = cpa > 0 ? ltv / cpa : 0;
       const isCurrent   = Math.abs(cpa - recCpaRounded) < 50;
 
       const tr = document.createElement('tr');
       if (isCurrent) tr.className = 'current-row';
-
-      const ratioClass = ratioVal >= 3 ? 'badge-ok' : ratioVal >= 1 ? 'badge-caution' : 'badge-warn';
 
       let hodnoceni, hodClass;
       if      (cpa <= maxCpa * 0.35) { hodnoceni = 'Vysoce ziskové'; hodClass = 'badge-ok'; }
@@ -795,11 +756,17 @@
         <td>${fmtN(Math.round(costPerLead))} Kč</td>
         <td class="${pc}">${profit >= 0 ? '+' : ''}${fmtN(profit)} Kč</td>
         <td class="${pc}">${profit >= 0 ? '+' : ''}${profitPct.toFixed(1)} %</td>
-        <td><span class="badge ${ratioClass}">${ratioVal.toFixed(1)} : 1</span></td>
         <td><span class="badge ${hodClass}">${hodnoceni}</span></td>
       `;
       tbody.appendChild(tr);
     }
+  }
+
+  function toggleHelp() {
+    const box = document.getElementById('margin_help');
+    const btn = document.querySelector('.help-toggle');
+    box.classList.toggle('open');
+    btn.style.color = box.classList.contains('open') ? 'var(--text-muted)' : 'var(--red)';
   }
 
   calculate();
