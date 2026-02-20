@@ -716,29 +716,46 @@
     const maxCpa = ltv * conv;
     const recCpa = maxCpa * 0.40;
     const profit = ltv - recCpa;
-    const ratio  = recCpa > 0 ? ltv / recCpa : 0;
 
     document.getElementById('out_ltv').textContent     = fmt(ltv);
     document.getElementById('out_max_cpa').textContent = fmt(maxCpa);
     document.getElementById('out_rec_cpa').textContent = fmt(recCpa);
     document.getElementById('out_profit').textContent  = fmt(profit);
 
-    const isOk = ratio >= 3;
-    document.getElementById('ratio_value').textContent = ratio.toFixed(1) + ' : 1';
-    document.getElementById('ratio_value').className   = 'ratio-value ' + (isOk ? 'ok' : 'warn');
-    document.getElementById('ratio_badge').textContent = isOk ? '✓ Zdravý poměr' : '⚠ Pod minimem 3 : 1';
-    document.getElementById('ratio_badge').className   = 'ratio-badge ' + (isOk ? 'ok' : 'warn');
-    document.getElementById('ratio_block').className   = 'ratio-block ' + (isOk ? 'ok' : 'warn');
-    document.getElementById('ratio_bar').className     = 'ratio-bar-fill ' + (isOk ? 'ok' : 'warn');
-    document.getElementById('ratio_bar').style.width   = Math.min(ratio / 6 * 100, 100) + '%';
+    const rv = document.getElementById('ratio_value');
+    const rb = document.getElementById('ratio_badge');
 
-    // Active band
-    ['band_danger','band_caution','band_good','band_great'].forEach(id =>
-      document.getElementById(id).classList.remove('active-band'));
-    if      (ratio < 1)  document.getElementById('band_danger').classList.add('active-band');
-    else if (ratio < 3)  document.getElementById('band_caution').classList.add('active-band');
-    else if (ratio <= 5) document.getElementById('band_good').classList.add('active-band');
-    else                 document.getElementById('band_great').classList.add('active-band');
+    // Ratio dava smysl jen pokud LTV i recCpa jsou > 1 Kc
+    // Jinak by matematicky vyslo obrovske cislo i pri LTV = 0
+    if (ltv < 1 || recCpa < 1) {
+      rv.textContent = '—';
+      rv.className   = 'ratio-value warn';
+      rb.textContent = '⚠ LTV je prílis nízké';
+      rb.className   = 'ratio-badge warn';
+      document.getElementById('ratio_block').className = 'ratio-block warn';
+      document.getElementById('ratio_bar').className   = 'ratio-bar-fill warn';
+      document.getElementById('ratio_bar').style.width = '0%';
+      ['band_danger','band_caution','band_good','band_great'].forEach(id =>
+        document.getElementById(id).classList.remove('active-band'));
+      document.getElementById('band_danger').classList.add('active-band');
+    } else {
+      const ratio = ltv / recCpa;
+      const isOk  = ratio >= 3;
+      rv.textContent = ratio.toFixed(1) + ' : 1';
+      rv.className   = 'ratio-value ' + (isOk ? 'ok' : 'warn');
+      rb.textContent = isOk ? '✓ Zdravý poměr' : '⚠ Pod minimem 3 : 1';
+      rb.className   = 'ratio-badge ' + (isOk ? 'ok' : 'warn');
+      document.getElementById('ratio_block').className = 'ratio-block ' + (isOk ? 'ok' : 'warn');
+      document.getElementById('ratio_bar').className   = 'ratio-bar-fill ' + (isOk ? 'ok' : 'warn');
+      document.getElementById('ratio_bar').style.width = Math.min(ratio / 6 * 100, 100) + '%';
+
+      ['band_danger','band_caution','band_good','band_great'].forEach(id =>
+        document.getElementById(id).classList.remove('active-band'));
+      if      (ratio < 1)  document.getElementById('band_danger').classList.add('active-band');
+      else if (ratio < 3)  document.getElementById('band_caution').classList.add('active-band');
+      else if (ratio <= 5) document.getElementById('band_good').classList.add('active-band');
+      else                 document.getElementById('band_great').classList.add('active-band');
+    }
 
     buildTable(ltv, maxCpa, recCpa, conv);
   }
