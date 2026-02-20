@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SaaS CPA Kalkulačka · zacileno</title>
+<title>Kalkulačka maximálního CPA pro SaaS · zacileno</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -83,9 +83,9 @@
   .calculator {
     display: grid;
     grid-template-columns: 360px 1fr;
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 24px;
-    align-items: start;
+    align-items: stretch;
   }
 
   .card {
@@ -208,39 +208,18 @@
   .results-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .result-block {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 18px;
-    background: var(--white);
-  }
-
-  .result-block.r-ltv    { border-top: 3px solid var(--red);   background: var(--red-light); border-color: var(--red-mid); border-top-color: var(--red); }
-  .result-block.r-maxcpa { border-top: 3px solid #333; }
-  .result-block.r-reccpa { border-top: 3px solid var(--green); }
-  .result-block.r-profit { border-top: 3px solid var(--orange); }
-
-  .result-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-bottom: 8px;
+    gap: 14px;
+    margin-bottom: 0;
   }
 
   .result-value {
     font-family: 'Roboto Mono', monospace;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--text);
     letter-spacing: -0.02em;
     line-height: 1;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
 
   .r-ltv    .result-value { color: var(--red); }
@@ -249,7 +228,7 @@
   .result-sub { font-size: 11px; color: var(--text-light); }
 
   /* TABLE */
-  .table-section { margin-top: 24px; }
+  .table-section { margin-top: 24px; padding: 0 24px; }
 
   .table-header { margin-bottom: 12px; }
   .table-header h2 { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -271,7 +250,7 @@
   }
 
   thead th {
-    padding: 11px 16px;
+    padding: 12px 20px;
     text-align: right;
     font-size: 10px;
     font-weight: 700;
@@ -297,7 +276,7 @@
   }
 
   tbody td {
-    padding: 10px 16px;
+    padding: 11px 20px;
     text-align: right;
     font-size: 13px;
     color: var(--text);
@@ -353,7 +332,155 @@
     .calculator   { grid-template-columns: 1fr; }
     .bands-grid   { grid-template-columns: 1fr 1fr; }
     .results-grid { grid-template-columns: 1fr 1fr; }
+    .calculator { grid-template-columns: 1fr; }
     header, .app  { padding-left: 16px; padding-right: 16px; }
+  }
+
+
+  /* CALCULATE BUTTON */
+  .calc-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 4px 12px rgba(237,30,0,0.3);
+  }
+
+  .calc-btn:hover {
+    background: #c91a00;
+    box-shadow: 0 6px 18px rgba(237,30,0,0.4);
+  }
+
+  .calc-btn:active { transform: scale(0.98); }
+
+  .calc-btn .btn-icon { font-size: 18px; }
+
+  /* Outputs card fills full height */
+  .outputs-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .outputs-card.flash {
+    animation: cardflash 0.4s ease;
+  }
+
+  @keyframes cardflash {
+    0%   { box-shadow: 0 0 0 2px var(--red), var(--shadow); }
+    50%  { box-shadow: 0 0 30px 6px rgba(237,30,0,0.3), var(--shadow); }
+    100% { box-shadow: var(--shadow-sm); }
+  }
+
+  /* LIGHTNING CANVAS */
+  #lightning-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Result blocks bigger padding since 2x2 */
+  .result-block {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    background: var(--white);
+  }
+
+  .result-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+
+
+  /* FORMULA BOXES */
+  .result-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .formula-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s, color 0.15s;
+    margin-top: 2px;
+  }
+
+  .formula-toggle:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .formula-toggle.open {
+    color: var(--red);
+    border-color: var(--red);
+  }
+
+  .formula-box {
+    display: none;
+    margin-top: 10px;
+    background: #f9f9f9;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+
+  .formula-box.open { display: block; }
+
+  .formula-line {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .fv {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .formula-example {
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+    margin-top: 4px;
   }
 
   /* HELP BOX */
@@ -538,7 +665,7 @@
 
 <div class="app">
   <div class="hero">
-    <h1>Kalkulačka <span>maximálního CPA</span></h1>
+    <h1>Kalkulačka maximálního CPA <span>pro SaaS</span></h1>
     <p>Zadejte parametry kampaně a okamžitě zjistěte maximální přípustnou cenu za akvizici zákazníka.</p>
   </div>
 
@@ -622,41 +749,64 @@
         </div>
         <input type="range" id="conversion_range" min="1" max="100" step="1" value="20">
       </div>
-    </div>
+
+      <button class="calc-btn" onclick="triggerCalculate()" type="button">
+        <span class="btn-icon">⚡</span> Zacílit na návratnost
+      </button>
     </div>
 
     <!-- OUTPUTS -->
     <div>
-      <div class="card" style="margin-bottom:14px;">
+      <div class="outputs-card" id="outputs-card">
         <div class="card-title">Klíčové výstupy</div>
         <div class="results-grid">
           <div class="result-block r-ltv">
             <div class="result-label">LTV zákazníka</div>
             <div class="result-value" id="out_ltv">—</div>
-            <div class="result-sub">Lifetime Value · s marží</div>
+            <div class="result-desc">Celková hodnota zákazníka po celou dobu předplatného, očištěná o přímé náklady.</div>
+            <button class="formula-toggle" onclick="toggleFormula('f-ltv')">vzorec ↓</button>
+            <div class="formula-box" id="f-ltv">
+              <div class="formula-line"><span class="fv">LTV</span> = MRR × délka × marže</div>
+              <div class="formula-example">např. 1 990 × 18 × 0,70 = <strong>25 074 Kč</strong></div>
+            </div>
           </div>
           <div class="result-block r-maxcpa">
             <div class="result-label">Max. přípustné CPA</div>
             <div class="result-value" id="out_max_cpa">—</div>
-            <div class="result-sub">Bod zvratu</div>
+            <div class="result-desc">Maximální částka, kterou můžete utratit za akvizici jednoho zákazníka, aniž byste prodělali. Hranice bodu zvratu.</div>
+            <button class="formula-toggle" onclick="toggleFormula('f-maxcpa')">vzorec ↓</button>
+            <div class="formula-box" id="f-maxcpa">
+              <div class="formula-line"><span class="fv">Max CPA</span> = LTV × konverzní poměr</div>
+              <div class="formula-example">např. 25 074 × 0,20 = <strong>5 015 Kč</strong></div>
+            </div>
           </div>
           <div class="result-block r-reccpa">
             <div class="result-label">Doporučené CPA</div>
             <div class="result-value" id="out_rec_cpa">—</div>
-            <div class="result-sub">40 % z max. CPA</div>
+            <div class="result-desc">Konzervativní cíl pro akvizici — 40 % z maxima. Zajistí dostatečný polštář zisku a prostor pro optimalizaci kampaní.</div>
+            <button class="formula-toggle" onclick="toggleFormula('f-reccpa')">vzorec ↓</button>
+            <div class="formula-box" id="f-reccpa">
+              <div class="formula-line"><span class="fv">Doporučené CPA</span> = Max CPA × 0,40</div>
+              <div class="formula-example">např. 5 015 × 0,40 = <strong>2 006 Kč</strong></div>
+            </div>
           </div>
           <div class="result-block r-profit">
             <div class="result-label">Zisk na zákazníka</div>
             <div class="result-value" id="out_profit">—</div>
-            <div class="result-sub">při doporučeném CPA</div>
+            <div class="result-desc">Kolik vám jeden zákazník skutečně vydělá po odečtení doporučeného CPA. Mělo by být vždy kladné.</div>
+            <button class="formula-toggle" onclick="toggleFormula('f-profit')">vzorec ↓</button>
+            <div class="formula-box" id="f-profit">
+              <div class="formula-line"><span class="fv">Zisk</span> = LTV − doporučené CPA</div>
+              <div class="formula-example">např. 25 074 − 2 006 = <strong>23 068 Kč</strong></div>
+            </div>
           </div>
         </div>
       </div>
-      </div>
-    </div>
-      </div>
     </div>
   </div>
+
+  <!-- LIGHTNING CANVAS -->
+  <canvas id="lightning-canvas"></canvas>
 
   <!-- TABLE -->
   <div class="table-section">
@@ -732,7 +882,16 @@
     const tableMax        = Math.max(Math.ceil(maxCpa * 2 / 100) * 100, 200);
     const recCpaRounded  = Math.round(recCpa / 100) * 100;
 
+    let rowCount = 0;
+    let unprofitableCount = 0;
+
     for (let cpa = 100; cpa <= tableMax; cpa += 100) {
+      if (rowCount >= 30) break;
+      if (cpa > maxCpa) {
+        unprofitableCount++;
+        if (unprofitableCount > 3) break;
+      }
+      rowCount++;
       const costPerLead = conv > 0 ? cpa / conv : 0;
       const profit      = ltv - cpa;
       const profitPct   = ltv > 0 ? (profit / ltv * 100) : 0;
@@ -760,6 +919,114 @@
       `;
       tbody.appendChild(tr);
     }
+  }
+
+
+  // ---- LIGHTNING EFFECT ----
+  function triggerCalculate() {
+    calculate();
+    fireLightning();
+    const card = document.getElementById('outputs-card');
+    card.classList.remove('flash');
+    void card.offsetWidth; // reflow
+    card.classList.add('flash');
+    setTimeout(() => card.classList.remove('flash'), 500);
+  }
+
+  function fireLightning() {
+    const canvas = document.getElementById('lightning-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Get outputs card position as target
+    const card = document.getElementById('outputs-card');
+    const rect  = card.getBoundingClientRect();
+    const targetX = rect.left + rect.width / 2;
+    const targetY = rect.top + rect.height / 2;
+
+    let bolts = [];
+    const BOLT_COUNT = 6;
+
+    // Spawn bolts from random top/side edges toward the card
+    for (let i = 0; i < BOLT_COUNT; i++) {
+      const side = Math.floor(Math.random() * 3); // 0=top, 1=left, 2=right
+      let sx, sy;
+      if (side === 0) { sx = Math.random() * canvas.width; sy = 0; }
+      else if (side === 1) { sx = 0; sy = Math.random() * canvas.height * 0.6; }
+      else { sx = canvas.width; sy = Math.random() * canvas.height * 0.6; }
+
+      bolts.push(buildBolt(sx, sy, targetX + (Math.random()-0.5)*120, targetY + (Math.random()-0.5)*80));
+    }
+
+    let frame = 0;
+    const TOTAL_FRAMES = 45;
+
+    function drawFrame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const alpha = frame < 10 ? frame/10 : 1 - (frame - 10) / (TOTAL_FRAMES - 10);
+
+      bolts.forEach(bolt => {
+        ctx.save();
+        ctx.globalAlpha = alpha * (0.6 + Math.random() * 0.4);
+        ctx.strokeStyle = frame % 3 === 0 ? '#ffffff' : '#ed1e00';
+        ctx.lineWidth   = frame < 4 ? 3 : 1.5;
+        ctx.shadowColor = '#ed1e00';
+        ctx.shadowBlur  = 18;
+        ctx.beginPath();
+        bolt.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
+        ctx.stroke();
+
+        // thin white core
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+        ctx.lineWidth   = 0.8;
+        ctx.shadowBlur  = 0;
+        ctx.beginPath();
+        bolt.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Glow circle on target
+      const gAlpha = alpha * 0.35;
+      const grad = ctx.createRadialGradient(targetX, targetY, 0, targetX, targetY, 80);
+      grad.addColorStop(0, `rgba(237,30,0,${gAlpha})`);
+      grad.addColorStop(1, 'rgba(237,30,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(targetX, targetY, 80, 0, Math.PI * 2);
+      ctx.fill();
+
+      frame++;
+      if (frame < TOTAL_FRAMES) requestAnimationFrame(drawFrame);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  function buildBolt(x1, y1, x2, y2) {
+    const pts = [{x: x1, y: y1}];
+    const steps = 22 + Math.floor(Math.random() * 12);
+    for (let i = 1; i < steps; i++) {
+      const t   = i / steps;
+      const mx  = x1 + (x2 - x1) * t;
+      const my  = y1 + (y2 - y1) * t;
+      const off = (1 - t) * (90 + Math.random() * 120);
+      pts.push({ x: mx + (Math.random() - 0.5) * off, y: my + (Math.random() - 0.5) * off });
+    }
+    pts.push({x: x2, y: y2});
+    return pts;
+  }
+  // ---- END LIGHTNING ----
+
+
+  function toggleFormula(id) {
+    const box = document.getElementById(id);
+    const btn = box.previousElementSibling;
+    const isOpen = box.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    btn.textContent = isOpen ? 'vzorec ↑' : 'vzorec ↓';
   }
 
   function toggleHelp() {
