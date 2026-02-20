@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS CPA Kalkulačka · zacileno</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #ed1e00;
+    --red-light: #fff0ee;
+    --red-mid: #ffc5bb;
+    --bg: #f4f4f4;
+    --white: #ffffff;
+    --border: #e0e0e0;
+    --text: #1a1a1a;
+    --text-muted: #666666;
+    --text-light: #999999;
+    --green: #1a7a3c;
+    --green-bg: #e8f5ee;
+    --orange: #c25800;
+    --orange-bg: #fff3e8;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--red);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    box-shadow: 0 2px 10px rgba(237,30,0,0.35);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-right {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 32px 64px;
+  }
+
+  .hero {
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 span { color: var(--red); }
+
+  .hero p { font-size: 14px; color: var(--text-muted); }
+
+  .calculator {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .val-preview {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--red);
+    text-transform: none;
+    letter-spacing: 0;
+    background: var(--red-light);
+    padding: 1px 7px;
+    border-radius: 4px;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap input[type=number] {
+    width: 100%;
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 44px 10px 12px;
+    color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .input-wrap input[type=number]:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(237,30,0,0.1);
+    background: var(--white);
+  }
+
+  .input-unit {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-light);
+    pointer-events: none;
+  }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: #e8e8e8;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    margin-top: 8px;
+    display: block;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--red);
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(237,30,0,0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  /* RESULT BLOCKS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .result-block {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    background: var(--white);
+  }
+
+  .result-block.r-ltv    { border-top: 3px solid var(--red);   background: var(--red-light); border-color: var(--red-mid); border-top-color: var(--red); }
+  .result-block.r-maxcpa { border-top: 3px solid #333; }
+  .result-block.r-reccpa { border-top: 3px solid var(--green); }
+  .result-block.r-profit { border-top: 3px solid var(--orange); }
+
+  .result-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+
+  .result-value {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .r-ltv    .result-value { color: var(--red); }
+  .r-reccpa .result-value { color: var(--green); }
+
+  .result-sub { font-size: 11px; color: var(--text-light); }
+
+  /* RATIO */
+  .ratio-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: border-left-color 0.3s;
+  }
+
+  .ratio-block.ok   { border-left: 4px solid var(--green); }
+  .ratio-block.warn { border-left: 4px solid var(--red); }
+
+  .ratio-number-wrap { flex-shrink: 0; text-align: center; min-width: 90px; }
+
+  .ratio-label-sm {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 2px;
+  }
+
+  .ratio-value {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .ratio-value.ok   { color: var(--green); }
+  .ratio-value.warn { color: var(--red); }
+
+  .ratio-bar-wrap { flex: 1; }
+
+  .ratio-bar-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ratio-bar-track {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .ratio-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease, background 0.3s;
+  }
+
+  .ratio-bar-fill.ok   { background: var(--green); }
+  .ratio-bar-fill.warn { background: var(--red); }
+
+  .ratio-bar-sub { font-size: 10px; color: var(--text-light); margin-top: 4px; }
+
+  .ratio-badge {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .ratio-badge.ok   { background: var(--green-bg); color: var(--green); }
+  .ratio-badge.warn { background: var(--red-light); color: var(--red); }
+
+  /* BANDS */
+  .bands-section { margin-top: 16px; }
+
+  .bands-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+
+  .bands-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .band-card {
+    border-radius: 8px;
+    padding: 14px 14px;
+    border: 1.5px solid transparent;
+    transition: box-shadow 0.25s, border-color 0.25s;
+  }
+
+  .band-card.band-danger  { background: #fff2f0; border-color: #ffc5bb; }
+  .band-card.band-caution { background: #fff9f0; border-color: #ffe0b0; }
+  .band-card.band-good    { background: #f0faf4; border-color: #b8dfc8; }
+  .band-card.band-great   { background: #f0f5ff; border-color: #b8cfee; }
+
+  .band-card.active-band {
+    box-shadow: 0 0 0 2px var(--red), var(--shadow);
+    border-color: var(--red) !important;
+  }
+
+  .band-range {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .band-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .band-danger  .band-dot { background: #c01508; }
+  .band-caution .band-dot { background: #c25800; }
+  .band-good    .band-dot { background: var(--green); }
+  .band-great   .band-dot { background: #1a4ea0; }
+
+  .band-danger  .band-range { color: #c01508; }
+  .band-caution .band-range { color: #c25800; }
+  .band-good    .band-range { color: var(--green); }
+  .band-great   .band-range { color: #1a4ea0; }
+
+  .band-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  .band-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* TABLE */
+  .table-section { margin-top: 24px; }
+
+  .table-header { margin-bottom: 12px; }
+  .table-header h2 { font-size: 15px; font-weight: 700; color: var(--text); }
+  .table-header p  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .table-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr {
+    background: #f8f8f8;
+    border-bottom: 2px solid var(--border);
+  }
+
+  thead th {
+    padding: 11px 16px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    white-space: nowrap;
+  }
+
+  thead th:first-child { text-align: left; }
+
+  tbody tr {
+    border-bottom: 1px solid #f2f2f2;
+    transition: background 0.1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+
+  tbody tr.current-row {
+    background: #fff5f3;
+    border-left: 3px solid var(--red);
+  }
+
+  tbody td {
+    padding: 10px 16px;
+    text-align: right;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  tbody td:first-child {
+    text-align: left;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-ok      { background: var(--green-bg); color: var(--green); }
+  .badge-warn    { background: var(--red-light); color: var(--red); }
+  .badge-caution { background: var(--orange-bg); color: var(--orange); }
+  .badge-neutral { background: #f0f0f0; color: var(--text-muted); }
+
+  .profit-pos { color: var(--green); font-weight: 500; }
+  .profit-neg { color: var(--red); font-weight: 500; }
+  .profit-zero { color: var(--text-muted); }
+
+  .current-tag {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--red);
+    background: var(--red-light);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  footer {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-light);
+  }
+
+  @media (max-width: 900px) {
+    .calculator   { grid-template-columns: 1fr; }
+    .bands-grid   { grid-template-columns: 1fr 1fr; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    header, .app  { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="130" height="24" viewBox="0 0 218 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#hc)">
+      <path d="M53.4429 26.08L63.7859 13.54V8.972H46.9105V13.54H56.9182V13.836L46.5791 26.248V31.028H63.991V26.376H53.4429V26.08Z" fill="white"/>
+      <path d="M83.5685 11.824H83.2805C82.535 10.692 80.4285 8.428 76.6653 8.428C70.7088 8.428 66.5747 13.208 66.5747 20.128C66.5747 27.048 70.7521 31.576 76.8309 31.576C80.7993 31.576 82.744 29.144 83.3634 28.22H83.6513V31.028H88.9451V8.972H83.5685V11.824ZM77.8605 26.668C74.3852 26.668 72.0302 24.028 72.0302 20.044C72.0302 16.06 74.3892 13.376 77.821 13.376C81.2529 13.376 83.6947 15.892 83.6947 20.044C83.6947 23.736 81.462 26.668 77.8644 26.668H77.8605Z" fill="white"/>
+      <path d="M104.121 13.372C106.645 13.372 108.669 14.924 109.332 17.104H114.83C114.002 11.904 109.663 8.424 104.077 8.424C97.2528 8.424 92.7046 13.5 92.7046 20C92.7046 26.5 97.2528 31.576 104.077 31.576C109.659 31.576 113.963 28.18 114.787 23.064H109.288C108.669 25.204 106.641 26.628 104.16 26.628C100.602 26.628 98.1641 23.82 98.1641 20C98.1641 16.18 100.48 13.372 104.121 13.372Z" fill="white"/>
+      <path d="M124.148 8.972H118.771V31.032H124.148V8.972Z" fill="white"/>
+      <path d="M156.968 8.424C150.597 8.424 146.009 13.164 146.009 20.124C146.009 26.708 150.558 31.572 156.968 31.572C162.593 31.572 166.478 28.636 167.555 24.148H162.549C161.804 25.952 159.78 27.208 157.133 27.208C153.658 27.208 151.386 24.944 151.22 21.588H167.764V19.868C167.764 13.66 163.958 8.42 156.972 8.42L156.968 8.424ZM151.303 17.736C151.634 14.968 153.95 12.788 156.968 12.788C159.985 12.788 162.384 14.76 162.632 17.736H151.299H151.303Z" fill="white"/>
+      <path d="M183.413 8.424C180.312 8.424 178.163 10.016 177.291 11.652H177.003V8.968H171.875V31.028H177.251V18.404C177.251 15.636 179.113 13.54 181.717 13.54C184.32 13.54 185.894 15.344 185.894 18.028V31.028H191.271V16.6C191.271 11.904 188.293 8.424 183.413 8.424Z" fill="white"/>
+      <path d="M206.418 8.424C199.555 8.424 194.837 13.456 194.837 20C194.837 26.544 199.594 31.576 206.418 31.576C213.243 31.576 218 26.544 218 20C218 13.456 213.243 8.424 206.418 8.424ZM206.418 26.628C202.86 26.628 200.296 23.904 200.296 20C200.296 16.096 202.817 13.372 206.418 13.372C210.02 13.372 212.54 16.18 212.54 20C212.54 23.82 209.976 26.628 206.418 26.628Z" fill="white"/>
+      <path d="M143.69 31.028V26.248H136.116C135 26.248 134.38 25.576 134.38 24.32V8.972H129.004V24.824C129.004 28.724 131.154 31.032 134.96 31.032H143.694L143.69 31.028Z" fill="white"/>
+      <path d="M30.528 20L15.0372 35.708H7.47915L20.2955 22.712H0V17.288H20.2955L7.47915 4.292H15.0372L30.528 20Z" fill="white"/>
+      <path d="M30.5281 0V14.576L35.881 20V0H30.5281Z" fill="white"/>
+      <path d="M30.5281 40H35.881V20L30.5281 25.424V40Z" fill="white"/>
+    </g>
+    <defs><clipPath id="hc"><rect width="218" height="40" fill="white"/></clipPath></defs>
+  </svg>
+  <div class="header-right">SaaS CPA Kalkulačka</div>
+</header>
+
+<div class="app">
+  <div class="hero">
+    <h1>Kalkulačka <span>maximálního CPA</span></h1>
+    <p>Zadejte parametry kampaně a okamžitě zjistěte maximální přípustnou cenu za akvizici zákazníka.</p>
+  </div>
+
+  <div class="calculator">
+
+    <!-- INPUTS -->
+    <div class="card">
+      <div class="card-title">Vstupní parametry</div>
+
+      <div class="field">
+        <label>MRR – měsíční předplatné <span class="val-preview" id="prev_mrr">1 990 Kč</span></label>
+        <div class="input-wrap">
+          <input type="number" id="mrr" value="1990" min="1" step="10">
+          <span class="input-unit">Kč</span>
+        </div>
+        <input type="range" id="mrr_range" min="100" max="20000" step="100" value="1990">
+      </div>
+
+      <div class="field">
+        <label>Délka předplatného <span class="val-preview" id="prev_dur">18 měs.</span></label>
+        <div class="input-wrap">
+          <input type="number" id="duration" value="18" min="1" max="120" step="1">
+          <span class="input-unit">měs.</span>
+        </div>
+        <input type="range" id="duration_range" min="1" max="60" step="1" value="18">
+      </div>
+
+      <div class="field">
+        <label>Marže <span class="val-preview" id="prev_margin">70 %</span></label>
+        <div class="input-wrap">
+          <input type="number" id="margin" value="70" min="1" max="100" step="1">
+          <span class="input-unit">%</span>
+        </div>
+        <input type="range" id="margin_range" min="1" max="100" step="1" value="70">
+      </div>
+
+      <div class="field">
+        <label>Konverzní poměr leadu <span class="val-preview" id="prev_conv">20 %</span></label>
+        <div class="input-wrap">
+          <input type="number" id="conversion" value="20" min="1" max="100" step="1">
+          <span class="input-unit">%</span>
+        </div>
+        <input type="range" id="conversion_range" min="1" max="100" step="1" value="20">
+      </div>
+    </div>
+
+    <!-- OUTPUTS -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title">Klíčové výstupy</div>
+        <div class="results-grid">
+          <div class="result-block r-ltv">
+            <div class="result-label">LTV zákazníka</div>
+            <div class="result-value" id="out_ltv">—</div>
+            <div class="result-sub">Lifetime Value · s marží</div>
+          </div>
+          <div class="result-block r-maxcpa">
+            <div class="result-label">Max. přípustné CPA</div>
+            <div class="result-value" id="out_max_cpa">—</div>
+            <div class="result-sub">Bod zvratu</div>
+          </div>
+          <div class="result-block r-reccpa">
+            <div class="result-label">Doporučené CPA</div>
+            <div class="result-value" id="out_rec_cpa">—</div>
+            <div class="result-sub">40 % z max. CPA</div>
+          </div>
+          <div class="result-block r-profit">
+            <div class="result-label">Zisk na zákazníka</div>
+            <div class="result-value" id="out_profit">—</div>
+            <div class="result-sub">při doporučeném CPA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATIO -->
+      <div class="ratio-block" id="ratio_block">
+        <div class="ratio-number-wrap">
+          <div class="ratio-label-sm">LTV : CAC Ratio</div>
+          <div class="ratio-value" id="ratio_value">—</div>
+        </div>
+        <div class="ratio-bar-wrap">
+          <div class="ratio-bar-label">
+            <span>Aktuální poměr</span>
+            <span>Minimum zdravého SaaS: 3 : 1</span>
+          </div>
+          <div class="ratio-bar-track">
+            <div class="ratio-bar-fill" id="ratio_bar" style="width:0%"></div>
+          </div>
+          <div class="ratio-bar-sub">při doporučeném CPA (40 % z maxima)</div>
+        </div>
+        <div class="ratio-badge" id="ratio_badge">—</div>
+      </div>
+
+      <!-- BANDS -->
+      <div class="bands-section">
+        <div class="bands-title">Co říká LTV : CAC ratio?</div>
+        <div class="bands-grid">
+          <div class="band-card band-danger" id="band_danger">
+            <div class="band-range"><span class="band-dot"></span>pod 1 : 1</div>
+            <div class="band-name">Kritické</div>
+            <div class="band-desc">Každý zákazník vás stojí víc, než kdy přinese. Spalujete peníze.</div>
+          </div>
+          <div class="band-card band-caution" id="band_caution">
+            <div class="band-range"><span class="band-dot"></span>1 : 1 – 3 : 1</div>
+            <div class="band-name">Přežití</div>
+            <div class="band-desc">Přežíváte, ale nemáte polštář na chyby, slevy ani retenci.</div>
+          </div>
+          <div class="band-card band-good" id="band_good">
+            <div class="band-range"><span class="band-dot"></span>3 : 1 – 5 : 1</div>
+            <div class="band-name">Zdravý SaaS</div>
+            <div class="band-desc">Investoři i management vidí toto jako signál udržitelného růstu.</div>
+          </div>
+          <div class="band-card band-great" id="band_great">
+            <div class="band-range"><span class="band-dot"></span>nad 5 : 1</div>
+            <div class="band-name">Skvělé – pozor</div>
+            <div class="band-desc">Možná utrácíte příliš málo na marketing a necháváte růst na stole.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <h2>Predikce CPA po 100 Kč</h2>
+      <p>Analýza ziskovosti pro různé scénáře výše CPA · zvýrazněná hodnota = aktuálně doporučené CPA</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>CPA</th>
+            <th>Náklady na lead</th>
+            <th>Zisk na zákazníka</th>
+            <th>Marže zisku</th>
+            <th>LTV : CAC</th>
+            <th>Hodnocení</th>
+          </tr>
+        </thead>
+        <tbody id="table_body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div>© 2025 zacileno · SaaS Marketing Analytics</div>
+    <div>LTV = MRR × délka × marže &nbsp;|&nbsp; Max CPA = LTV × konverze &nbsp;|&nbsp; Doporučené CPA = 40 % z Max CPA</div>
+  </footer>
+</div>
+
+<script>
+  const fmt  = v => Math.round(v).toLocaleString('cs-CZ') + ' Kč';
+  const fmtN = v => Math.round(v).toLocaleString('cs-CZ');
+
+  const fields = [
+    ['mrr',        'mrr_range',        'prev_mrr',    v => fmtN(v) + ' Kč'],
+    ['duration',   'duration_range',   'prev_dur',    v => v + ' měs.'],
+    ['margin',     'margin_range',     'prev_margin', v => v + ' %'],
+    ['conversion', 'conversion_range', 'prev_conv',   v => v + ' %'],
+  ];
+
+  fields.forEach(([inp, rng, prev, display]) => {
+    const i = document.getElementById(inp);
+    const r = document.getElementById(rng);
+    const p = document.getElementById(prev);
+    i.addEventListener('input', () => { r.value = i.value; p.textContent = display(i.value); calculate(); });
+    r.addEventListener('input', () => { i.value = r.value; p.textContent = display(r.value); calculate(); });
+  });
+
+  function calculate() {
+    const mrr      = parseFloat(document.getElementById('mrr').value) || 0;
+    const duration = parseFloat(document.getElementById('duration').value) || 0;
+    const margin   = parseFloat(document.getElementById('margin').value) / 100 || 0;
+    const conv     = parseFloat(document.getElementById('conversion').value) / 100 || 0;
+
+    const ltv    = mrr * duration * margin;
+    const maxCpa = ltv * conv;
+    const recCpa = maxCpa * 0.40;
+    const profit = ltv - recCpa;
+    const ratio  = recCpa > 0 ? ltv / recCpa : 0;
+
+    document.getElementById('out_ltv').textContent     = fmt(ltv);
+    document.getElementById('out_max_cpa').textContent = fmt(maxCpa);
+    document.getElementById('out_rec_cpa').textContent = fmt(recCpa);
+    document.getElementById('out_profit').textContent  = fmt(profit);
+
+    const isOk = ratio >= 3;
+    document.getElementById('ratio_value').textContent = ratio.toFixed(1) + ' : 1';
+    document.getElementById('ratio_value').className   = 'ratio-value ' + (isOk ? 'ok' : 'warn');
+    document.getElementById('ratio_badge').textContent = isOk ? '✓ Zdravý poměr' : '⚠ Pod minimem 3 : 1';
+    document.getElementById('ratio_badge').className   = 'ratio-badge ' + (isOk ? 'ok' : 'warn');
+    document.getElementById('ratio_block').className   = 'ratio-block ' + (isOk ? 'ok' : 'warn');
+    document.getElementById('ratio_bar').className     = 'ratio-bar-fill ' + (isOk ? 'ok' : 'warn');
+    document.getElementById('ratio_bar').style.width   = Math.min(ratio / 6 * 100, 100) + '%';
+
+    // Active band
+    ['band_danger','band_caution','band_good','band_great'].forEach(id =>
+      document.getElementById(id).classList.remove('active-band'));
+    if      (ratio < 1)  document.getElementById('band_danger').classList.add('active-band');
+    else if (ratio < 3)  document.getElementById('band_caution').classList.add('active-band');
+    else if (ratio <= 5) document.getElementById('band_good').classList.add('active-band');
+    else                 document.getElementById('band_great').classList.add('active-band');
+
+    buildTable(ltv, maxCpa, recCpa, conv);
+  }
+
+  function buildTable(ltv, maxCpa, recCpa, conv) {
+    const tbody = document.getElementById('table_body');
+    tbody.innerHTML = '';
+    if (maxCpa <= 0) return;
+
+    const tableMax      = Math.max(Math.ceil(maxCpa * 2 / 100) * 100, 200);
+    const recCpaRounded = Math.round(recCpa / 100) * 100;
+
+    for (let cpa = 100; cpa <= tableMax; cpa += 100) {
+      const costPerLead = conv > 0 ? cpa / conv : 0;
+      const profit      = ltv - cpa;
+      const profitPct   = ltv > 0 ? (profit / ltv * 100) : 0;
+      const ratioVal    = cpa > 0 ? ltv / cpa : 0;
+      const isCurrent   = Math.abs(cpa - recCpaRounded) < 50;
+
+      const tr = document.createElement('tr');
+      if (isCurrent) tr.className = 'current-row';
+
+      const ratioClass = ratioVal >= 3 ? 'badge-ok' : ratioVal >= 1 ? 'badge-caution' : 'badge-warn';
+
+      let hodnoceni, hodClass;
+      if      (cpa <= maxCpa * 0.35) { hodnoceni = 'Vysoce ziskové'; hodClass = 'badge-ok'; }
+      else if (cpa <= maxCpa * 0.55) { hodnoceni = 'Doporučeno';     hodClass = 'badge-ok'; }
+      else if (cpa <= maxCpa * 0.80) { hodnoceni = 'Přijatelné';     hodClass = 'badge-neutral'; }
+      else if (cpa < maxCpa)         { hodnoceni = 'Hraniční';       hodClass = 'badge-caution'; }
+      else if (cpa === maxCpa)       { hodnoceni = 'Bod zvratu';     hodClass = 'badge-warn'; }
+      else                           { hodnoceni = 'Neziskové';      hodClass = 'badge-warn'; }
+
+      const pc = profit > 0 ? 'profit-pos' : profit < 0 ? 'profit-neg' : 'profit-zero';
+
+      tr.innerHTML = `
+        <td>${fmtN(cpa)} Kč${isCurrent ? '<span class="current-tag">doporučeno</span>' : ''}</td>
+        <td>${fmtN(Math.round(costPerLead))} Kč</td>
+        <td class="${pc}">${profit >= 0 ? '+' : ''}${fmtN(profit)} Kč</td>
+        <td class="${pc}">${profit >= 0 ? '+' : ''}${profitPct.toFixed(1)} %</td>
+        <td><span class="badge ${ratioClass}">${ratioVal.toFixed(1)} : 1</span></td>
+        <td><span class="badge ${hodClass}">${hodnoceni}</span></td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  calculate();
+</script>
+</body>
+</html>
