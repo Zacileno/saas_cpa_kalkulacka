@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS CPA Kalkulačka · zacileno</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0808;
+    --surface: #160e0e;
+    --surface2: #1e1212;
+    --border: #2e1a1a;
+    --accent: #ed1e00;
+    --accent2: #ff5533;
+    --warn: #ff8c00;
+    --text: #ffffff;
+    --muted: #7a5a5a;
+    --label: #c09090;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(237,30,0,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(237,30,0,0.04) 0%, transparent 60%);
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,8,8,0.95);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo-wrap svg { display: block; }
+
+  .header-right {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* MAIN LAYOUT */
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 60px;
+  }
+
+  .hero {
+    margin-bottom: 36px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .hero p {
+    font-size: 13px;
+    color: var(--label);
+    letter-spacing: 0.02em;
+  }
+
+  /* TWO-COLUMN */
+  .calculator {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* INPUTS */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 8px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 48px 12px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(237,30,0,0.15);
+  }
+
+  .input-unit {
+    position: absolute;
+    right: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  /* SLIDER */
+  .slider-wrap {
+    margin-top: 8px;
+  }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(237,30,0,0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  /* RESULTS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .result-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .result-block.primary {
+    border-color: rgba(237,30,0,0.35);
+    background: linear-gradient(135deg, rgba(237,30,0,0.07) 0%, var(--surface2) 60%);
+  }
+
+  .result-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .result-block.primary::before { background: var(--accent); }
+  .result-block.secondary::before { background: #ff5533; }
+  .result-block.recommend::before { background: #ffffff; }
+
+  .result-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .result-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    transition: color 0.3s;
+  }
+
+  .result-block.primary .result-value { color: var(--accent); }
+
+  .result-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* LTV:CAC RATIO BLOCK */
+  .ratio-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: border-color 0.3s;
+  }
+
+  .ratio-block.ok { border-color: rgba(255,255,255,0.25); }
+  .ratio-block.warn { border-color: rgba(237,30,0,0.5); }
+
+  .ratio-left { flex: 1; }
+
+  .ratio-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .ratio-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .ratio-value.ok { color: #ffffff; }
+  .ratio-value.warn { color: var(--accent); }
+
+  .ratio-bar-wrap {
+    flex: 1;
+  }
+
+  .ratio-bar-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ratio-bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .ratio-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease, background 0.3s;
+    background: var(--accent);
+  }
+
+  .ratio-bar-fill.warn { background: var(--accent); }
+
+  .ratio-badge {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ratio-badge.ok { background: rgba(255,255,255,0.1); color: #ffffff; }
+  .ratio-badge.warn { background: rgba(237,30,0,0.2); color: var(--accent); }
+
+  /* PREDICTION TABLE */
+  .table-section {
+    margin-top: 32px;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .table-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .table-header p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  thead th:first-child { text-align: left; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(37,42,53,0.6);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody tr.current-row {
+    background: rgba(237,30,0,0.08);
+    border-left: 3px solid var(--accent);
+  }
+
+  tbody td {
+    padding: 10px 16px;
+    text-align: right;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--label);
+  }
+
+  .badge-ratio {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .badge-ok { background: rgba(255,255,255,0.1); color: #ffffff; }
+  .badge-warn { background: rgba(237,30,0,0.2); color: var(--accent); }
+  .badge-neutral { background: rgba(120,90,90,0.2); color: var(--muted); }
+
+  .profit-pos { color: #ffffff; }
+  .profit-neg { color: var(--accent); }
+  .profit-zero { color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .calculator { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    header { padding: 16px 20px; }
+    .app { padding: 24px 20px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <svg width="140" height="26" viewBox="0 0 218 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#clip0_31_3109)">
+        <path d="M53.4429 26.08L63.7859 13.54V8.972H46.9105V13.54H56.9182V13.836L46.5791 26.248V31.028H63.991V26.376H53.4429V26.08Z" fill="white"/>
+        <path d="M83.5685 11.824H83.2805C82.535 10.692 80.4285 8.428 76.6653 8.428C70.7088 8.428 66.5747 13.208 66.5747 20.128C66.5747 27.048 70.7521 31.576 76.8309 31.576C80.7993 31.576 82.744 29.144 83.3634 28.22H83.6513V31.028H88.9451V8.972H83.5685V11.824ZM77.8605 26.668C74.3852 26.668 72.0302 24.028 72.0302 20.044C72.0302 16.06 74.3892 13.376 77.821 13.376C81.2529 13.376 83.6947 15.892 83.6947 20.044C83.6947 23.736 81.462 26.668 77.8644 26.668H77.8605Z" fill="white"/>
+        <path d="M104.121 13.372C106.645 13.372 108.669 14.924 109.332 17.104H114.83C114.002 11.904 109.663 8.424 104.077 8.424C97.2528 8.424 92.7046 13.5 92.7046 20C92.7046 26.5 97.2528 31.576 104.077 31.576C109.659 31.576 113.963 28.18 114.787 23.064H109.288C108.669 25.204 106.641 26.628 104.16 26.628C100.602 26.628 98.1641 23.82 98.1641 20C98.1641 16.18 100.48 13.372 104.121 13.372Z" fill="white"/>
+        <path d="M124.148 8.972H118.771V31.032H124.148V8.972Z" fill="white"/>
+        <path d="M156.968 8.424C150.597 8.424 146.009 13.164 146.009 20.124C146.009 26.708 150.558 31.572 156.968 31.572C162.593 31.572 166.478 28.636 167.555 24.148H162.549C161.804 25.952 159.78 27.208 157.133 27.208C153.658 27.208 151.386 24.944 151.22 21.588H167.764V19.868C167.764 13.66 163.958 8.42 156.972 8.42L156.968 8.424ZM151.303 17.736C151.634 14.968 153.95 12.788 156.968 12.788C159.985 12.788 162.384 14.76 162.632 17.736H151.299H151.303Z" fill="white"/>
+        <path d="M183.413 8.424C180.312 8.424 178.163 10.016 177.291 11.652H177.003V8.968H171.875V31.028H177.251V18.404C177.251 15.636 179.113 13.54 181.717 13.54C184.32 13.54 185.894 15.344 185.894 18.028V31.028H191.271V16.6C191.271 11.904 188.293 8.424 183.413 8.424Z" fill="white"/>
+        <path d="M206.418 8.424C199.555 8.424 194.837 13.456 194.837 20C194.837 26.544 199.594 31.576 206.418 31.576C213.243 31.576 218 26.544 218 20C218 13.456 213.243 8.424 206.418 8.424ZM206.418 26.628C202.86 26.628 200.296 23.904 200.296 20C200.296 16.096 202.817 13.372 206.418 13.372C210.02 13.372 212.54 16.18 212.54 20C212.54 23.82 209.976 26.628 206.418 26.628Z" fill="white"/>
+        <path d="M143.69 31.028V26.248H136.116C135 26.248 134.38 25.576 134.38 24.32V8.972H129.004V24.824C129.004 28.724 131.154 31.032 134.96 31.032H143.694L143.69 31.028Z" fill="white"/>
+        <path d="M30.528 20L15.0372 35.708H7.47915L20.2955 22.712H0V17.288H20.2955L7.47915 4.292H15.0372L30.528 20Z" fill="white"/>
+        <path d="M30.5281 0V14.576L35.881 20V0H30.5281Z" fill="white"/>
+        <path d="M30.5281 40H35.881V20L30.5281 25.424V40Z" fill="white"/>
+      </g>
+      <defs>
+        <clipPath id="clip0_31_3109">
+          <rect width="218" height="40" fill="white"/>
+        </clipPath>
+      </defs>
+    </svg>
+  </div>
+  <div class="header-right">SaaS CPA Kalkulačka</div>
+</header>
+
+<div class="app">
+  <div class="hero">
+    <h1>Kalkulačka maximálního CPA</h1>
+    <p>Zadejte parametry kampaně a okamžitě zjistěte maximální přípustnou cenu za akvizici zákazníka.</p>
+  </div>
+
+  <div class="calculator">
+
+    <!-- LEFT: INPUTS -->
+    <div class="card">
+      <div class="card-title">Vstupní parametry</div>
+
+      <div class="field">
+        <label>Měsíční cena předplatného (MRR)</label>
+        <div class="input-wrap">
+          <input type="number" id="mrr" value="1990" min="1" step="10">
+          <span class="input-unit">Kč</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="mrr_range" min="100" max="20000" step="100" value="1990">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Průměrná délka předplatného</label>
+        <div class="input-wrap">
+          <input type="number" id="duration" value="18" min="1" max="120" step="1">
+          <span class="input-unit">měs.</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="duration_range" min="1" max="60" step="1" value="18">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Marže</label>
+        <div class="input-wrap">
+          <input type="number" id="margin" value="70" min="1" max="100" step="1">
+          <span class="input-unit">%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="margin_range" min="1" max="100" step="1" value="70">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Úspěšnost leadu (konverzní poměr)</label>
+        <div class="input-wrap">
+          <input type="number" id="conversion" value="20" min="1" max="100" step="1">
+          <span class="input-unit">%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="conversion_range" min="1" max="100" step="1" value="20">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Klíčové výstupy</div>
+        <div class="results-grid">
+          <div class="result-block primary">
+            <div class="result-label">LTV zákazníka</div>
+            <div class="result-value" id="out_ltv">—</div>
+            <div class="result-sub">Lifetime Value · s marží</div>
+          </div>
+          <div class="result-block secondary">
+            <div class="result-label">Max. přípustné CPA</div>
+            <div class="result-value" id="out_max_cpa">—</div>
+            <div class="result-sub">Bod zvratu</div>
+          </div>
+          <div class="result-block recommend">
+            <div class="result-label">Doporučené CPA</div>
+            <div class="result-value" id="out_rec_cpa">—</div>
+            <div class="result-sub" id="out_rec_pct">40 % z max. CPA</div>
+          </div>
+          <div class="result-block">
+            <div class="result-label">Zisk na zákazníka</div>
+            <div class="result-value" id="out_profit">—</div>
+            <div class="result-sub">při doporučeném CPA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATIO -->
+      <div class="ratio-block" id="ratio_block">
+        <div class="ratio-left">
+          <div class="ratio-label">LTV : CAC Ratio</div>
+          <div class="ratio-value" id="ratio_value">—</div>
+        </div>
+        <div class="ratio-bar-wrap">
+          <div class="ratio-bar-label">
+            <span>Min. zdravý benchmark</span>
+            <span>3 : 1</span>
+          </div>
+          <div class="ratio-bar-track">
+            <div class="ratio-bar-fill" id="ratio_bar" style="width:0%"></div>
+          </div>
+          <div style="font-size:10px; color: var(--muted); margin-top:5px;">při doporučeném CPA</div>
+        </div>
+        <div class="ratio-badge" id="ratio_badge">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <div>
+        <h2>Predikce CPA po 100 Kč</h2>
+        <p>Analýza ziskovosti pro různé scénáře výše CPA · aktuálně nastavená hodnota je zvýrazněna</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>CPA (Kč)</th>
+            <th>Náklady na lead (Kč)</th>
+            <th>Zisk na zákazníka (Kč)</th>
+            <th>Marže zisku</th>
+            <th>LTV:CAC</th>
+            <th>Hodnocení</th>
+          </tr>
+        </thead>
+        <tbody id="table_body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div>© 2025 zacileno · SaaS Marketing Analytics</div>
+    <div>LTV = MRR × délka × marže &nbsp;|&nbsp; Max CPA = LTV × konverze</div>
+  </footer>
+</div>
+
+<script>
+  const fmt = v => Math.round(v).toLocaleString('cs-CZ') + ' Kč';
+  const fmtN = v => Math.round(v).toLocaleString('cs-CZ');
+
+  // Sync inputs and ranges
+  const pairs = [
+    ['mrr', 'mrr_range'],
+    ['duration', 'duration_range'],
+    ['margin', 'margin_range'],
+    ['conversion', 'conversion_range']
+  ];
+
+  pairs.forEach(([inp, rng]) => {
+    const i = document.getElementById(inp);
+    const r = document.getElementById(rng);
+    i.addEventListener('input', () => { r.value = i.value; calculate(); });
+    r.addEventListener('input', () => { i.value = r.value; calculate(); });
+  });
+
+  function calculate() {
+    const mrr = parseFloat(document.getElementById('mrr').value) || 0;
+    const duration = parseFloat(document.getElementById('duration').value) || 0;
+    const margin = parseFloat(document.getElementById('margin').value) / 100 || 0;
+    const conv = parseFloat(document.getElementById('conversion').value) / 100 || 0;
+
+    const ltv = mrr * duration * margin;
+    const maxCpa = ltv * conv;
+    const recCpa = maxCpa * 0.40;
+    const profit = ltv - recCpa;
+    const ratio = recCpa > 0 ? ltv / recCpa : 0;
+
+    document.getElementById('out_ltv').textContent = fmt(ltv);
+    document.getElementById('out_max_cpa').textContent = fmt(maxCpa);
+    document.getElementById('out_rec_cpa').textContent = fmt(recCpa);
+    document.getElementById('out_profit').textContent = fmt(profit);
+
+    // Ratio display
+    const isOk = ratio >= 3;
+    const rv = document.getElementById('ratio_value');
+    const rb = document.getElementById('ratio_badge');
+    const rblock = document.getElementById('ratio_block');
+    const rbar = document.getElementById('ratio_bar');
+
+    rv.textContent = ratio.toFixed(1) + ' : 1';
+    rv.className = 'ratio-value ' + (isOk ? 'ok' : 'warn');
+    rb.textContent = isOk ? '✓ Zdravý' : '⚠ Pod minimem';
+    rb.className = 'ratio-badge ' + (isOk ? 'ok' : 'warn');
+    rblock.className = 'ratio-block ' + (isOk ? 'ok' : 'warn');
+    rbar.className = 'ratio-bar-fill ' + (isOk ? '' : 'warn');
+
+    const barPct = Math.min(ratio / 6 * 100, 100);
+    rbar.style.width = barPct + '%';
+
+    buildTable(ltv, maxCpa, recCpa, conv);
+  }
+
+  function buildTable(ltv, maxCpa, recCpa, conv) {
+    const tbody = document.getElementById('table_body');
+    tbody.innerHTML = '';
+
+    if (maxCpa <= 0) return;
+
+    // Build range: from 100 up to at least 2x maxCpa, step 100
+    const tableMax = Math.max(Math.ceil(maxCpa * 2 / 100) * 100, 200);
+    const recCpaRounded = Math.round(recCpa / 100) * 100;
+
+    for (let cpa = 100; cpa <= tableMax; cpa += 100) {
+      const costPerLead = conv > 0 ? cpa / conv : 0;
+      const profit = ltv - cpa;
+      const profitPct = ltv > 0 ? (profit / ltv * 100) : 0;
+      const ratioVal = cpa > 0 ? ltv / cpa : 0;
+
+      const isCurrent = Math.abs(cpa - recCpaRounded) < 50;
+      const tr = document.createElement('tr');
+      if (isCurrent) tr.className = 'current-row';
+
+      let ratioBadge, ratioClass;
+      if (ratioVal >= 5) { ratioBadge = ratioVal.toFixed(1) + ' : 1'; ratioClass = 'badge-ok'; }
+      else if (ratioVal >= 3) { ratioBadge = ratioVal.toFixed(1) + ' : 1'; ratioClass = 'badge-ok'; }
+      else if (ratioVal >= 1) { ratioBadge = ratioVal.toFixed(1) + ' : 1'; ratioClass = 'badge-warn'; }
+      else { ratioBadge = ratioVal.toFixed(1) + ' : 1'; ratioClass = 'badge-neutral'; }
+
+      let hodnoceni, hodClass;
+      if (cpa <= maxCpa * 0.35) { hodnoceni = 'Vysoce ziskové'; hodClass = 'badge-ok'; }
+      else if (cpa <= maxCpa * 0.55) { hodnoceni = 'Doporučeno'; hodClass = 'badge-ok'; }
+      else if (cpa <= maxCpa * 0.80) { hodnoceni = 'Přijatelné'; hodClass = 'badge-neutral'; }
+      else if (cpa < maxCpa) { hodnoceni = 'Hraniční'; hodClass = 'badge-warn'; }
+      else if (cpa === maxCpa) { hodnoceni = 'Bod zvratu'; hodClass = 'badge-warn'; }
+      else { hodnoceni = 'Neziskové'; hodClass = 'badge-warn'; }
+
+      const profitClass = profit > 0 ? 'profit-pos' : profit < 0 ? 'profit-neg' : 'profit-zero';
+
+      tr.innerHTML = `
+        <td><strong>${fmtN(cpa)} Kč</strong>${isCurrent ? ' <span style="font-size:9px;color:var(--accent)">← doporučeno</span>' : ''}</td>
+        <td>${fmtN(Math.round(costPerLead))} Kč</td>
+        <td class="${profitClass}">${profit >= 0 ? '+' : ''}${fmtN(profit)} Kč</td>
+        <td class="${profitClass}">${profit >= 0 ? '+' : ''}${profitPct.toFixed(1)} %</td>
+        <td><span class="badge-ratio ${ratioClass}">${ratioBadge}</span></td>
+        <td><span class="badge-ratio ${hodClass}">${hodnoceni}</span></td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  calculate();
+</script>
+</body>
+</html>
